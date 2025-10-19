@@ -3,6 +3,7 @@ import Page from '../components/layout/Page.jsx'
 import Card from '../components/ui/Card.jsx'
 import Input from '../components/ui/Input.jsx'
 import Button from '../components/ui/Button.jsx'
+import { useNavigate } from 'react-router-dom'
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false)
@@ -11,6 +12,8 @@ export default function Login() {
     e.preventDefault()
     // TODO: intégrer l'API de manière sécurisée (ne pas journaliser les identifiants)
   }
+
+  const navigate = useNavigate()
 
   return (
     <Page>
@@ -62,7 +65,13 @@ export default function Login() {
           </div>
 
           <div className='pt-4'>
-            <Button type="submit" className="w-full hover:bg-[#6aa41b] text-white focus:ring-emerald-600">Se connecter</Button>
+            <Button 
+              type="submit" 
+              className="w-full hover:bg-[#6aa41b] text-white focus:ring-emerald-600"
+              onClick={() => navigate('/dashboard')}
+            >
+              Se connecter
+            </Button>
           </div>
         </form>
       </Card>
