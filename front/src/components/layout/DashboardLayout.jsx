@@ -1,13 +1,12 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { FolderKanban , ChartColumn } from 'lucide-react';
 
 export default function DashboardLayout({ children }) {
   const location = useLocation()
 
   const navItems = [
     { id: 'overview', label: 'Aperçu', path: '/dashboard' },
-    { id: 'capteurs', label: 'Capteurs', path: '/dashboard#capteurs' },
-    { id: 'actionneurs', label: 'Actionneurs', path: '/dashboard#actionneurs' },
   ]
 
   const isActive = (path) => {
@@ -33,26 +32,26 @@ export default function DashboardLayout({ children }) {
               <Link
                 key={item.id}
                 to={item.path}
-                className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`flex px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                   isActive(item.path)
-                    ? 'bg-brand text-white'
+                    ? 'text-brand'
                     : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                 }`}
               >
-                {item.label}
+                <FolderKanban className='mr-2' /> {item.label}
               </Link>
             ))}
             
             {/* Monitoring Button - Special styling */}
             <Link
               to="/monitoring"
-              className={`ml-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`flex ml-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                 location.pathname === '/monitoring'
-                  ? 'bg-blue-600 text-white shadow-lg'
-                  : 'bg-blue-500 text-white hover:bg-blue-600 shadow-md'
+                  ? 'text-brand'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
               }`}
             >
-              🔍 Monitoring
+              <ChartColumn  className='mr-2' /> Monitoring
             </Link>
           </nav>
 

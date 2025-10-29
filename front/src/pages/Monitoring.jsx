@@ -9,7 +9,7 @@ export default function Monitoring() {
   // Fetch dashboard data from your API
   const fetchData = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/dashboard/overview')
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/dashboard/overview`)
       if (!response.ok) throw new Error('Failed to fetch data')
       const result = await response.json()
       setData(result)
