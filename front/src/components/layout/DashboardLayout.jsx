@@ -1,9 +1,12 @@
 import React from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { FolderKanban , ChartColumn } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext.jsx'
 
 export default function DashboardLayout({ children }) {
   const location = useLocation()
+  const navigate = useNavigate()
+  const { logout } = useAuth()
 
   const navItems = [
     { id: 'overview', label: 'Aperçu', path: '/dashboard' },
@@ -56,9 +59,18 @@ export default function DashboardLayout({ children }) {
           </nav>
 
           <div className="flex items-center gap-2">
-            <Link to="/" className="btn text-sm bg-gray-100 text-gray-700 hover:bg-gray-200">
+            <button
+              className="btn text-sm bg-gray-100 text-gray-700 hover:bg-gray-200"
+              onClick={async () => {
+                try {
+                  await logout()
+                } finally {
+                  navigate('/')
+                }
+              }}
+            >
               Déconnecter
-            </Link>
+            </button>
           </div>
         </div>
       </header>

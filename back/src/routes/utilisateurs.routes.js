@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
 import { asyncHandler } from '../utils/index.js';
-import { register, login, getProfile } from '../controllers/utilisateurs.controller.js';
+import { register, login, getProfile, logout } from '../controllers/utilisateurs.controller.js';
 import { authMiddleware } from '../middlewares/auth.js';
 import { validate } from '../middlewares/validate.js';
 
@@ -19,5 +19,7 @@ router.post('/login', [
 ], validate, asyncHandler(login));
 
 router.get('/me', authMiddleware, asyncHandler(getProfile));
+
+router.post('/logout', asyncHandler(logout));
 
 export default router;
