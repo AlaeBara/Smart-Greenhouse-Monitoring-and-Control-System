@@ -11,9 +11,23 @@ import { connectDB } from './config/database.js';
 import apiRouter from './routes/index.js';
 import { notFoundHandler, errorHandler } from './middlewares/errorHandlers.js';
 import { csrfProtection, issueCsrfToken } from './middlewares/csrf.js';
+import os from 'os';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Helper function to get your local network IP
+function getLocalIp() {
+  const nets = os.networkInterfaces();
+  for (const name of Object.keys(nets)) {
+    for (const net of nets[name]) {
+      if (net.family === 'IPv4' && !net.internal) {
+        return net.address;
+      }
+    }
+  }
+  return 'localhost';
+}
 
 // Security & middleware
 app.use(helmet());
@@ -42,6 +56,7 @@ app.get('/health', (_req, res) => {
 });
 
 // API routes
+
 // CSRF token issuing endpoint
 app.get('/api/csrf-token', issueCsrfToken);
 
@@ -57,11 +72,16 @@ app.use(errorHandler);
 // Start server after DB connection
 connectDB()
   .then(() => {
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
+    app.listen(PORT, '0.0.0.0', () => {
+      const localIp = getLocalIp();
+      console.log(`✅ Server running successfully!`);
+      console.log(`→ Local:   http://localhost:${PORT}`);
+      console.log(`→ Network: http://${localIp}:${PORT}`);
     });
   })
   .catch((err) => {
-    console.error('Failed to connect to database:', err);
+    console.error('❌ Failed to connect to database:', err);
     process.exit(1);
   });
+
+  

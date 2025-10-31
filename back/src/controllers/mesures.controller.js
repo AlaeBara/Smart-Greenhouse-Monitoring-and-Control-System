@@ -13,11 +13,6 @@ export const listMesures = async (_req, res) => {
   res.json(list);
 };
 
-export const getMesure = async (req, res) => {
-  const item = await Mesure.findById(req.params.id);
-  if (!item) return res.status(404).json({ message: 'Mesure non trouvée' });
-  res.json(item);
-};
 
 export const listMesuresByCapteur = async (req, res) => {
   const list = await Mesure.find({ capteur_id: req.params.capteurId }).sort({ timestamp: -1 });
