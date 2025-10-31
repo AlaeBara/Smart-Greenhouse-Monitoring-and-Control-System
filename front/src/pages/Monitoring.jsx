@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import DashboardLayout from '../components/layout/DashboardLayout.jsx'
+import { Siren ,TriangleAlert ,Check  } from 'lucide-react';
 
 export default function Monitoring() {
   const [data, setData] = useState(null)
@@ -111,7 +112,7 @@ export default function Monitoring() {
                 {data?.alertes?.summary?.critical || 0}
               </p>
             </div>
-            <div className="text-4xl">🚨</div>
+            <div className="text-4xl"><Siren className='text-red-600' size={40}/></div>
           </div>
         </div>
 
@@ -124,7 +125,7 @@ export default function Monitoring() {
                 {data?.alertes?.summary?.warning || 0}
               </p>
             </div>
-            <div className="text-4xl">⚠️</div>
+            <div className="text-4xl"><TriangleAlert className='text-yellow-400' size={40}/></div>
           </div>
         </div>
 
@@ -137,7 +138,7 @@ export default function Monitoring() {
                 {data?.alertes?.summary?.normal || 0}
               </p>
             </div>
-            <div className="text-4xl">✅</div>
+            <div className="text-4xl"><Check className='text-green-600' size={40}/></div>
           </div>
         </div>
       </div>
