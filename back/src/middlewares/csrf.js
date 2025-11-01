@@ -19,6 +19,9 @@ export const csrfProtection = (req, res, next) => {
   const method = req.method.toUpperCase();
   if (['GET', 'HEAD', 'OPTIONS'].includes(method)) return next();
 
+  const hasSessionCookie = Boolean(req.cookies?.access_token);
+  if (!hasSessionCookie) return next();
+
   const cookieToken = req.cookies?.csrf_token;
   const headerToken = req.headers['x-csrf-token'];
   if (!cookieToken || !headerToken || cookieToken !== headerToken) {
