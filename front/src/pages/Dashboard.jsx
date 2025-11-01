@@ -41,7 +41,7 @@ export default function Dashboard() {
         const byType = (t) => sensors.find(s => (s.lastMesure?.type || '').toLowerCase() === t)
         const byCapteurType = (t) => sensors.find(s => (s.type || '').toLowerCase() === t)
 
-        const humidite = byType('humidite')
+        const humidite = byType('temperature')
         const luminosite = byType('luminosite') || byCapteurType('luminosite')
         const humiditeSol = byCapteurType('humidite_sol')
         const caz = byType('caz')
@@ -92,11 +92,11 @@ export default function Dashboard() {
       <section id="overview">
         <h2 className="text-lg font-medium text-gray-800">Aperçu</h2>
         <p className="mt-1 text-sm text-gray-500">Visualisation des métriques des capteurs et actionneurs.</p>
-        {loading && (
+        {/* {loading && (
           <p className="mt-2 text-xs text-gray-400 text-center">Chargement des données…</p>
-        )}
+        )} */}
         {error && (
-          <p className="mt-2 text-xs text-red-500">{error}</p>
+          <p className="mt-2 text-xs text-red-500 text-center">{error}</p>
         )}
 
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

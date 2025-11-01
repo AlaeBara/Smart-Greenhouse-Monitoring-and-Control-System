@@ -1,7 +1,7 @@
 import React from 'react'
 
 export default function StatusBadge({ status = 'Inactif' }) {
-  const isActive = status.toLowerCase().includes('actif')
+  const isActive = status === 'Actif'
   const color = isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
   const dot = isActive ? 'bg-green-500' : 'bg-gray-400'
   return (
