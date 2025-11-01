@@ -6,29 +6,85 @@ import ActionnersActivityBar from '../components/charts/ActionnersActivityBar.js
 import StatusBadge from '../components/ui/StatusBadge.jsx'
 
 export default function Dashboard() {
-  const [actuators, setActuators] = useState([
-    { label: 'Pompe d’arrosage', status: 'Inactif', icon: '🚰' },
-    { label: 'Ventilation', status: 'Inactif', icon: '🌀' },
-    { label: 'Éclairage', status: 'Inactif', icon: '💡' },
+  // Overview metrics tiles (requested): Humidité, Luminosité, Humidité du sol, Caz (MQ2)
+  const [overviewMetrics, setOverviewMetrics] = useState([
+    { label: 'Humidité', value: '--', icon: '💧', trend: '' },
+    { label: 'Luminosité', value: '--', icon: '🔆', trend: '' },
+    { label: 'Humidité du sol', value: '--', icon: '🌱', trend: '' },
+    { label: 'Caz (MQ2)', value: '--', icon: '🧪', trend: '' },
   ])
 
-  useEffect(() => {
-    const id = setInterval(() => {
-      setActuators((curr) => curr.map((a) => {
-        const rand = Math.random()
-        const next = rand > 0.7 ? 'Actif' : 'Inactif'
-        return { ...a, status: next }
-      }))
-    }, 3000)
-    return () => clearInterval(id)
-  }, [])
+  // Actuators requested: pompe d'irrigation and ventilation
+  const [actuators, setActuators] = useState([
+    { label: "Pompe d'irrigation", status: 'Inactif', icon: '🚰' },
+    { label: 'Ventilation', status: 'Inactif', icon: '🌀' },
+  ])
 
-  const overviewMetrics = [
-    { label: 'Température', value: '--', icon: '🌡️', trend: '+0.0°C' },
-    { label: 'Humidité', value: '--', icon: '💧', trend: '-0.0%' },
-    { label: 'Luminosité', value: '--', icon: '🔆', trend: '+0 lx' },
-    { label: 'Humidité du sol', value: '--', icon: '🌱', trend: '+0%' },
-  ]
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+
+  // Fetch latest sensors and actuators from backend
+  useEffect(() => {
+    const url = `${ import.meta.env.VITE_BACKEND_URL}/api/mesures/last-capteurs-actionneurs`
+    let mounted = true
+
+    async function load() {
+      try {
+        setLoading(true)
+        setError(null)
+        const resp = await fetch(url, { method: 'GET' })
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`)
+        const data = await resp.json()
+        if (!mounted) return
+
+        const sensors = Array.isArray(data?.capteurs) ? data.capteurs : []
+        const byType = (t) => sensors.find(s => (s.lastMesure?.type || '').toLowerCase() === t)
+        const byCapteurType = (t) => sensors.find(s => (s.type || '').toLowerCase() === t)
+
+        const humidite = byType('humidite')
+        const luminosite = byType('luminosite') || byCapteurType('luminosite')
+        const humiditeSol = byCapteurType('humidite_sol')
+        const caz = byType('caz')
+
+        const formatValue = (s) => {
+          if (!s || !s.lastMesure) return '--'
+          const v = s.lastMesure.valeur
+          const u = s.unite ? ` ${s.unite}` : ''
+          return `${v}${u}`
+        }
+
+        setOverviewMetrics([
+          { label: 'Humidité', value: formatValue(humidite), icon: '💧', trend: '' },
+          { label: 'Luminosité', value: formatValue(luminosite), icon: '🔆', trend: '' },
+          { label: 'Humidité du sol', value: formatValue(humiditeSol), icon: '🌱', trend: '' },
+          { label: 'Caz (MQ2)', value: formatValue(caz), icon: '🧪', trend: '' },
+        ])
+
+        // Update actuators: keep only pump and ventilation
+        const acts = Array.isArray(data?.actionneurs) ? data.actionneurs : []
+        const normalizeLabel = (a) => (a.nom || a.type || '').toLowerCase()
+        const isPump = (a) => /pompe|irrigation/.test(normalizeLabel(a))
+        const isVent = (a) => /ventil/.test(normalizeLabel(a))
+
+        const selected = acts.filter(a => isPump(a) || isVent(a)).map(a => ({
+          label: a.nom || (isPump(a) ? "Pompe d'irrigation" : 'Ventilation'),
+          status: (a.etat === 'ON' || a.lastAction?.etat === 'ON') ? 'Actif' : 'Inactif',
+          icon: isPump(a) ? '🚰' : '🌀',
+        }))
+        if (selected.length) setActuators(selected)
+      } catch (err) {
+        console.error('Failed to load data', err)
+        if (!mounted) return
+        setError('Impossible de charger les données du backend')
+      } finally {
+        if (mounted) setLoading(false)
+      }
+    }
+
+    load()
+    const id = setInterval(load, 5000) // refresh every 15s
+    return () => { mounted = false; clearInterval(id) }
+  }, [])
 
   return (
     <DashboardLayout>
@@ -36,6 +92,12 @@ export default function Dashboard() {
       <section id="overview">
         <h2 className="text-lg font-medium text-gray-800">Aperçu</h2>
         <p className="mt-1 text-sm text-gray-500">Visualisation des métriques des capteurs et actionneurs.</p>
+        {loading && (
+          <p className="mt-2 text-xs text-gray-400 text-center">Chargement des données…</p>
+        )}
+        {error && (
+          <p className="mt-2 text-xs text-red-500">{error}</p>
+        )}
 
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {overviewMetrics.map((m) => (
@@ -63,7 +125,7 @@ export default function Dashboard() {
         <h2 className="text-lg font-medium text-gray-800">État des actionneurs</h2>
         <p className="mt-1 text-sm text-gray-500">Indicateurs de statut et activité récente.</p>
 
-        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
           {actuators.map((a) => (
             <div key={a.label} className="rounded-2xl bg-white shadow-soft p-6 border border-gray-100">
               <div className="flex items-center gap-4">
