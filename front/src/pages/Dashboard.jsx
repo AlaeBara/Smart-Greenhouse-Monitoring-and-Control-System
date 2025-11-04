@@ -44,7 +44,7 @@ export default function Dashboard() {
         const humidite = byType('temperature')
         const luminosite = byType('luminosite') || byCapteurType('luminosite')
         const humiditeSol = byCapteurType('humidite_sol')
-        const caz = byType('caz')
+        const caz = byType('gaz')
 
         const formatValue = (s) => {
           if (!s || !s.lastMesure) return '--'

@@ -12,12 +12,12 @@ export default function Historique() {
       setLoading(true)
       
       // Fetch timeline
-      const timelineRes = await fetch(`http://localhost:3000/api/historique/timeline?limit=50`)
+      const timelineRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/historique/timeline?limit=50`)
       const timelineData = await timelineRes.json()
       setTimeline(timelineData.data || [])
 
       // Fetch statistics
-      const statsRes = await fetch(`http://localhost:3000/api/historique/statistics?period=${period}`)
+      const statsRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/historique/statistics?period=${period}`)
       const statsData = await statsRes.json()
       setStatistics(statsData)
       
@@ -75,7 +75,7 @@ export default function Historique() {
           <button
             key={p}
             onClick={() => setPeriod(p)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`px-1 sm:px-6 py-2 rounded-lg text-sm font-medium transition-colors ${
               period === p
                 ? 'bg-brand text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'

@@ -59,6 +59,19 @@ export default function Monitoring() {
     }
   }
 
+   const getAlertIcon = (level) => {
+    switch (level) {
+      case 'critical':
+        return '🚨'
+      case 'warning':
+        return '⚠️'
+      case 'normal':
+        return '✅'
+      default:
+        return '❓'
+    }
+  }
+
   if (loading) {
     return (
       <DashboardLayout>
