@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import DashboardLayout from '../components/layout/DashboardLayout.jsx'
+import { ChartNoAxesColumnDecreasing, Activity , ChartGantt  } from 'lucide-react';
 
 export default function Historique() {
   const [timeline, setTimeline] = useState([])
@@ -91,7 +92,7 @@ export default function Historique() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           {/* Sensor Statistics */}
           <div className="rounded-2xl bg-white shadow-soft p-6 border border-gray-100">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">📊 Statistiques des Capteurs</h2>
+            <h2 className="flex text-lg font-semibold text-gray-800 mb-4 gap-2"><ChartNoAxesColumnDecreasing/> Statistiques des Capteurs</h2>
             <div className="space-y-4">
               {statistics.sensors?.map((sensor, index) => (
                 <div key={index} className="bg-gray-50 rounded-lg p-4">
@@ -123,7 +124,7 @@ export default function Historique() {
 
           {/* Actuator Statistics */}
           <div className="rounded-2xl bg-white shadow-soft p-6 border border-gray-100">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">⚙️ Statistiques des Actionneurs</h2>
+            <h2 className="flex text-lg font-semibold text-gray-800 mb-4 gap-2"><Activity /> Statistiques des Actionneurs</h2>
             <div className="space-y-4">
               {statistics.actuators?.map((actuator, index) => (
                 <div key={index} className="bg-gray-50 rounded-lg p-4">
@@ -161,7 +162,7 @@ export default function Historique() {
 
       {/* Timeline */}
       <div className="rounded-2xl bg-white shadow-soft p-6 border border-gray-100">
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">📜 Chronologie des Événements</h2>
+        <h2 className="flex text-lg font-semibold text-gray-800 mb-4 gap-2"><ChartGantt /> Chronologie des Événements</h2>
         
         {timeline.length === 0 ? (
           <div className="text-center py-12">
