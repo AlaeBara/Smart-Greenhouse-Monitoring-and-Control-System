@@ -7,6 +7,7 @@ import ErrorBoundary from './components/ErrorBoundary.jsx'
 const Login = lazy(() => import('./pages/Login.jsx'))
 const Dashboard = lazy(() => import('./pages/Dashboard.jsx'))
 const Monitoring = lazy(() => import('./pages/Monitoring.jsx'))
+const Historique = lazy(() => import('./pages/Historique.jsx'))  // ← Already there
 
 export default function App() {
   return (
@@ -38,6 +39,15 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <Monitoring />
+                  </ProtectedRoute>
+                }
+              />
+              {/* ← ADD THIS ROUTE */}
+              <Route
+                path="/historique"
+                element={
+                  <ProtectedRoute>
+                    <Historique />
                   </ProtectedRoute>
                 }
               />

@@ -22,6 +22,13 @@ export const THRESHOLDS = {
     optimal_min: 400,
     optimal_max: 1000,
     unit: 'lux'
+  },
+  gaz: {  
+    min: 0,
+    max: 1000,
+    optimal_min: 0,
+    optimal_max: 300,
+    unit: 'ppm'
   }
 };
 
@@ -60,17 +67,31 @@ export function getAlertLevel(type, value) {
   };
 }
 
+// Helper function to map sensor types to measurement types
+export function getSensorMeasurementType(sensorType) {
+  const mapping = {
+    'DHT22': 'temperature',
+    'humidite_sol': 'humidite',
+    'luminosite': 'luminosite',
+    'MQ2': 'gaz'  // ← NEW: Map MQ2 to 'gaz' type
+  };
+  return mapping[sensorType] || sensorType.toLowerCase();
+}
+
 export function analyzeAllSensors(sensors) {
   const alerts = [];
   const summary = {
     critical: 0,
     warning: 0,
-    normal: 0
+    normal: 0,
+    unknown: 0  
   };
 
   sensors.forEach(sensor => {
     if (sensor.lastMesure) {
-      const alert = getAlertLevel(sensor.lastMesure.type, sensor.lastMesure.valeur);
+      // Map sensor type to measurement type for threshold checking
+      const measurementType = getSensorMeasurementType(sensor.type);
+      const alert = getAlertLevel(measurementType, sensor.lastMesure.valeur);
       
       alerts.push({
         capteur_id: sensor.capteur_id,
@@ -86,8 +107,8 @@ export function analyzeAllSensors(sensors) {
     }
   });
 
-  // Sort by severity: critical first, then warning, then normal
-  const severityOrder = { critical: 0, warning: 1, normal: 2 };
+  // Sort by severity: critical first, then warning, then normal, then unknown
+  const severityOrder = { critical: 0, warning: 1, normal: 2, unknown: 3 };
   alerts.sort((a, b) => severityOrder[a.alert.level] - severityOrder[b.alert.level]);
 
   return {

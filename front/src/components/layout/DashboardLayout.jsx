@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { FolderKanban , ChartColumn } from 'lucide-react';
+import { FolderKanban, ChartColumn, History } from 'lucide-react';  
 import { useAuth } from '../../context/AuthContext.jsx'
 
 export default function DashboardLayout({ children }) {
@@ -55,6 +55,17 @@ export default function DashboardLayout({ children }) {
               }`}
             >
               <ChartColumn  className='mr-2' /> Monitoring
+            </Link>
+            
+          <Link
+              to="/historique"
+              className={`flex ml-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                location.pathname === '/historique'
+                  ? 'text-brand'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+              }`}
+            >
+              <History className='mr-2' /> Historique
             </Link>
           </nav>
 

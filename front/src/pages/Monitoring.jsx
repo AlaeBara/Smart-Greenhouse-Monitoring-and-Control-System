@@ -43,16 +43,19 @@ export default function Monitoring() {
     }
   }
 
-  const getAlertIcon = (level) => {
-    switch (level) {
-      case 'critical':
-        return '🚨'
-      case 'warning':
-        return '⚠️'
-      case 'normal':
-        return '✅'
+  // Get icon based on sensor type
+  const getSensorIcon = (sensorType) => {
+    switch (sensorType) {
+      case 'DHT22':
+        return '🌡️'
+      case 'humidite_sol':
+        return '💧'
+      case 'luminosite':
+        return '☀️'
+      case 'MQ2':
+        return '💨'  // Gas sensor icon
       default:
-        return '❓'
+        return '📊'
     }
   }
 
@@ -228,6 +231,7 @@ export default function Monitoring() {
       </div>
 
       {/* Sensor Details */}
+      {/* Sensor Details */}
       <div>
         <h2 className="text-lg font-semibold text-gray-800 mb-4">
           Détails des Capteurs
@@ -239,7 +243,10 @@ export default function Monitoring() {
               className="rounded-2xl bg-white shadow-soft p-6 border border-gray-100"
             >
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-gray-900">{capteur.type}</h3>
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">{getSensorIcon(capteur.type)}</span>  {/* ← ADD ICON */}
+                  <h3 className="font-semibold text-gray-900">{capteur.type}</h3>
+                </div>
                 <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                   capteur.etat ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
                 }`}>
