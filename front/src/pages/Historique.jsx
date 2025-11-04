@@ -13,7 +13,7 @@ export default function Historique() {
       setLoading(true)
       
       // Fetch timeline
-      const timelineRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/historique/timeline?limit=50`)
+      const timelineRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/historique/timeline?limit=100`)
       const timelineData = await timelineRes.json()
       setTimeline(timelineData.data || [])
 

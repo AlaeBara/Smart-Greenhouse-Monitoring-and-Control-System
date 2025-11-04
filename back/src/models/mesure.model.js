@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const mesureSchema = new mongoose.Schema({
-  capteur_id: { type: mongoose.Schema.Types.ObjectId, ref: 'capteurs', required: true },
+  capteur_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Capteur', required: true },
   type: { type: String, required: true, enum: ['temperature', 'humidite', 'luminosite', 'gaz'] },  
   valeur: { type: Number, required: true },
   timestamp: { type: Date, default: Date.now },
