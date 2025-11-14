@@ -53,7 +53,7 @@ export const login = async (req, res) => {
   const maxAgeMs = 7 * 24 * 60 * 60 * 1000; // 7 days
   res.cookie('access_token', token, {
     httpOnly: true,
-    sameSite: 'strict',
+    sameSite: 'None',
     secure: true, // Prevent CSRF attacks
     maxAge: maxAgeMs
   });
@@ -67,6 +67,12 @@ export const getProfile = async (req, res) => {
 };
 
 export const logout = async (_req, res) => {
-  res.clearCookie('access_token', { path: '/' });
+  //res.clearCookie('access_token', { path: '/' });
+  res.clearCookie('access_token', {
+    httpOnly: true,
+    sameSite: 'None',
+    secure: true,
+    path: '/', // Match the path used when setting the cookie
+  });
   return apiResponse(res, { ok: true }, 'Déconnexion réussie');
 };
