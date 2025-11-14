@@ -8,6 +8,7 @@ import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import { connectDB } from './config/database.js';
+import { connectPostgres, ensureTables } from './config/postgres.js';
 import apiRouter from './routes/index.js';
 import { notFoundHandler, errorHandler } from './middlewares/errorHandlers.js';
 import { csrfProtection, issueCsrfToken } from './middlewares/csrf.js';
@@ -70,7 +71,17 @@ app.use(notFoundHandler);
 app.use(errorHandler);
 
 // Start server after DB connection
-connectDB()
+Promise.all([
+  connectDB(),
+  (async () => {
+    try {
+      const pg = await connectPostgres();
+      if (pg) await ensureTables();
+    } catch (e) {
+      console.error('Postgres connection failed:', e.message);
+    }
+  })()
+])
   .then(() => {
     app.listen(PORT, '0.0.0.0', () => {
       const localIp = getLocalIp();

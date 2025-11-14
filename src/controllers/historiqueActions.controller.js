@@ -1,7 +1,28 @@
 import HistoriqueAction from '../models/historiqueAction.model.js';
+import { getPool } from '../config/postgres.js';
 
 export const createHistoriqueAction = async (req, res) => {
   const act = await HistoriqueAction.create(req.body);
+  // Mirror insert into Postgres (best-effort)
+  try {
+    const pool = getPool();
+    if (pool) {
+      await pool.query(
+        `INSERT INTO historique_actions (mongo_id, actionneur_mongo_id, type_action, etat, timestamp)
+         VALUES ($1, $2, $3, $4, $5)
+         ON CONFLICT (mongo_id) DO NOTHING`,
+        [
+          String(act._id),
+          String(act.actionneur_id),
+          act.type_action,
+          act.etat,
+          act.timestamp || new Date()
+        ]
+      );
+    }
+  } catch (e) {
+    console.error('Postgres insert (historique_actions) failed:', e.message);
+  }
   res.status(201).json(act);
 };
 
