@@ -7,7 +7,7 @@ export const issueCsrfToken = (req, res) => {
   const token = crypto.randomBytes(32).toString('hex');
   res.cookie('csrf_token', token, {
     httpOnly: false,
-    sameSite: 'strict',
+    sameSite: 'None',
     secure: true
   });
   res.json({ csrfToken: token });
