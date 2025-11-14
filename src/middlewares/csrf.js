@@ -6,9 +6,9 @@ const isProd = (process.env.NODE_ENV || '').toLowerCase() === 'production';
 export const issueCsrfToken = (req, res) => {
   const token = crypto.randomBytes(32).toString('hex');
   res.cookie('csrf_token', token, {
-    httpOnly: false, // must be readable by frontend to set header
-    sameSite: 'none',
-    secure: isProd,
+    httpOnly: false,
+    sameSite: 'None',
+    secure: true, 
     path: '/',
   });
   res.json({ csrfToken: token });
