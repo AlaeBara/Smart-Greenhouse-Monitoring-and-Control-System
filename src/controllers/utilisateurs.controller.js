@@ -55,8 +55,7 @@ export const login = async (req, res) => {
     httpOnly: true,
     sameSite: 'strict',
     secure: true, // Prevent CSRF attacks
-    maxAge: maxAgeMs,
-    path: '/',
+    maxAge: maxAgeMs
   });
   return apiResponse(res, { token }, 'Connexion réussie');
 };

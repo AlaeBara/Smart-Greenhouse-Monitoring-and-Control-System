@@ -8,8 +8,7 @@ export const issueCsrfToken = (req, res) => {
   res.cookie('csrf_token', token, {
     httpOnly: false,
     sameSite: 'strict',
-    secure: true, 
-    path: '/',
+    secure: true
   });
   res.json({ csrfToken: token });
 };
