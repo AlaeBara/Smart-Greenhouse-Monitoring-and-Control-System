@@ -4,6 +4,7 @@ import Utilisateur from '../models/utilisateur.model.js';
 import { apiResponse } from '../utils/index.js';
 import dotenv from 'dotenv';
 import path from 'path';
+import { getPool } from '../config/postgres.js';
 
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
@@ -20,6 +21,20 @@ export const register = async (req, res) => {
   const salt = await bcrypt.genSalt(10);
   const hashed = await bcrypt.hash(mot_de_passe, salt);
   const user = await Utilisateur.create({ nom, email, mot_de_passe: hashed });
+  // Also store in Postgres (best-effort)
+  try {
+    const pool = getPool();
+    if (pool) {
+      await pool.query(
+        `INSERT INTO utilisateurs (mongo_id, nom, email, mot_de_passe, date_creation)
+         VALUES ($1, $2, $3, $4, $5)
+         ON CONFLICT (email) DO NOTHING`,
+        [String(user._id), user.nom, user.email, user.mot_de_passe, user.date_creation || new Date()]
+      );
+    }
+  } catch (e) {
+    console.error('Postgres insert (utilisateurs) failed:', e.message);
+  }
   return apiResponse(res, { id: user._id, nom: user.nom, email: user.email }, 'Utilisateur créé', 201);
 };
 

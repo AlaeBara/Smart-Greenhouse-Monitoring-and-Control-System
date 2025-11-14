@@ -2,9 +2,30 @@ import Mesure from '../models/mesure.model.js';
 import Capteur from '../models/capteur.model.js';
 import Actionneur from '../models/actionneur.model.js';
 import HistoriqueAction from '../models/historiqueAction.model.js';
+import { getPool } from '../config/postgres.js';
 
 export const createMesure = async (req, res) => {
   const mesure = await Mesure.create(req.body);
+  // Mirror insert into Postgres (best-effort)
+  try {
+    const pool = getPool();
+    if (pool) {
+      await pool.query(
+        `INSERT INTO mesures (mongo_id, capteur_mongo_id, type, valeur, timestamp)
+         VALUES ($1, $2, $3, $4, $5)
+         ON CONFLICT (mongo_id) DO NOTHING`,
+        [
+          String(mesure._id),
+          String(mesure.capteur_id),
+          mesure.type,
+          Number(mesure.valeur),
+          mesure.timestamp || new Date()
+        ]
+      );
+    }
+  } catch (e) {
+    console.error('Postgres insert (mesures) failed:', e.message);
+  }
   res.status(201).json(mesure);
 };
 
