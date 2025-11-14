@@ -53,8 +53,8 @@ export const login = async (req, res) => {
   const maxAgeMs = 7 * 24 * 60 * 60 * 1000; // 7 days
   res.cookie('access_token', token, {
     httpOnly: true,
-     sameSite: 'None',
-      secure: true, // Prevent CSRF attacks
+    sameSite: 'strict',
+    secure: true, // Prevent CSRF attacks
     maxAge: maxAgeMs,
     path: '/',
   });
