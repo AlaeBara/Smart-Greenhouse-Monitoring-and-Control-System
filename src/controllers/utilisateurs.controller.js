@@ -52,10 +52,10 @@ export const login = async (req, res) => {
   // Set httpOnly cookie for secure storage
   const maxAgeMs = 7 * 24 * 60 * 60 * 1000; // 7 days
   res.cookie('access_token', token, {
-    httpOnly: true, // Cookie is not accessible via JavaScript
-    sameSite: 'None',
+    httpOnly: true,
+    sameSite: 'strict',
     secure: true, // Prevent CSRF attacks
-    maxAge: 300000000
+    maxAge: maxAgeMs
   });
   return apiResponse(res, { token }, 'Connexion réussie');
 };
